@@ -5,72 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>祝福视频上传</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
         body { background: #f8f5f0; padding: 20px; }
-        .upload-card { background: #fff; border-radius: 16px; padding: 28px; max-width: 400px; margin: 40px auto; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        h1 { color: #c00; font-size: 22px; margin-bottom: 10px; text-align: center; }
-        .desc { color: #666; font-size: 15px; margin-bottom: 24px; text-align: center; line-height: 1.5; }
-        .upload-box { border: 2px dashed #eee; border-radius: 12px; padding: 30px 10px; text-align: center; }
-        #fileInput { display: none; }
-        .upload-btn { background: #c00; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; }
-        .link-box { margin-top: 24px; padding: 14px; background: #f6f6f6; border-radius: 10px; word-break: break-all; display: none; }
-        .link-box a { color: #c00; text-decoration: none; }
-        .status { margin-top: 16px; color: #333; text-align: center; font-size: 14px; }
+        .container { max-width: 500px; margin: 0 auto; }
+        .card { background: #fff; border-radius: 16px; padding: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        h1 { color: #c00; margin-bottom: 10px; text-align: center; }
+        .desc { color: #666; margin-bottom: 24px; text-align: center; line-height: 1.5; }
+        .upload-box { border: 2px dashed #eee; border-radius: 12px; padding: 30px; text-align: center; }
+        #file-input { display: none; }
+        .upload-btn { background: #c00; color: #fff; padding: 12px 24px; border-radius: 10px; display: inline-block; cursor: pointer; margin-top: 10px; font-size: 16px; }
+        .link-box { margin-top: 24px; padding: 14px; background: #f6f6f6; border-radius: 10px; word-break: break-all; }
+        .link-box a { color: #c00; text-decoration: none; font-size: 14px; }
+        .status { margin-top: 16px; color: #333; text-align: center; }
     </style>
 </head>
 <body>
-    <div class="upload-card">
-        <h1>上传祝福视频</h1>
-        <p class="desc">上传后自动生成播放链接，写入NFC即可使用</p >
-        
-        <div class="upload-box">
-            <p style="margin-bottom:15px; color:#666;">选择视频文件上传</p >
-            <button class="upload-btn" id="chooseBtn">选择视频</button>
-            <input type="file" id="fileInput" accept="video/*">
-        </div>
+<div class="container">
+<div class="card">
+<h1>上传祝福视频</h1>
+<p class="desc">上传后自动生成播放链接，写入NFC即可使用</p >
 
-        <div class="status" id="status"></div>
-        <div class="link-box" id="linkBox">
-            <p style="margin-bottom:8px; color:#333; font-weight:bold;">生成的播放链接：</p >
-            
-            <p style="margin-top:10px; font-size:12px; color:#666;">（长按链接复制，写入NFC标签即可）</p >
-        </div>
-    </div>
+<div class="upload-box">
+<p>选择视频文件上传</p >
+<label class="upload-btn" for="file-input">选择视频</label>
+<input type="file" id="file-input" accept="video/*">
+</div>
 
-    <script>
-        const chooseBtn = document.getElementById('chooseBtn');
-        const fileInput = document.getElementById('fileInput');
-        const status = document.getElementById('status');
-        const linkBox = document.getElementById('linkBox');
-        const playLink = document.getElementById('playLink');
+<div class="status" id="status"></div>
+<div class="link-box" id="linkBox" style="display: none;">
+你的播放链接：<br>
+<a id="playUrl" target="_blank"></a >
+<p style="margin-top:8px;font-size:14px;color:#666">长按链接复制，写入NFC标签即可</p >
+</div>
+</div>
+</div>
 
-        // 点击按钮触发文件选择
-        chooseBtn.addEventListener('click', () => {
-            fileInput.click();
-        });
+<script>
+const fileInput = document.getElementById('file-input');
+const status = document.getElementById('status');
+const linkBox = document.getElementById('linkBox');
+const playUrl = document.getElementById('playUrl');
 
-        // 文件选择后处理
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) {
-                status.textContent = "未选择视频文件";
-                return;
-            }
+fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) {
+        status.textContent = "未选择文件";
+        return;
+    }
 
-            status.textContent = "正在生成链接...";
-            linkBox.style.display = 'none';
+    status.textContent = "正在生成链接...";
+    linkBox.style.display = 'none';
 
-            // 生成本地视频URL
-            const videoUrl = URL.createObjectURL(file);
-            // 生成带参数的播放链接
-            const fullPlayUrl = `${window.location.origin}${window.location.pathname.replace('upload.html', 'player.html')}?video=${encodeURIComponent(videoUrl)}`;
+    // 生成本地视频临时链接
+    const tempVideoUrl = URL.createObjectURL(file);
+    // 拼接完整播放链接
+    const fullPlayLink = window.location.origin + window.location.pathname.replace('upload.html', 'player.html') + '?video=' + encodeURIComponent(tempVideoUrl);
 
-            // 显示链接
-            playLink.href = fullPlayUrl;
-            playLink.textContent = fullPlayUrl;
-            linkBox.style.display = 'block';
-            status.textContent = "链接生成成功！";
-        });
-    </script>
+    // 显示链接
+    playUrl.href = fullPlayLink;
+    playUrl.textContent = fullPlayLink;
+    linkBox.style.display = 'block';
+    status.textContent = "链接生成成功！";
+});
+</script>
 </body>
 </html>
