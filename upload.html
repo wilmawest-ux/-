@@ -65,18 +65,4 @@ body: form
 let data = await res.json();
 
 if (data.url) {
-let playerLink = `${window.location.origin}${window.location.pathname.replace('upload.html', '')}player.html?src=${encodeURIComponent(data.url)}`;
-playUrl.href = playerLink;
-playUrl.textContent = playerLink;
-linkBox.style.display = "block";
-status.textContent = "上传成功！";
-} else {
-status.textContent = "上传失败";
-}
-} catch (e) {
-status.textContent = "上传出错，请重试";
-}
-});
-</script>
-</body>
-</html>
+let playerLink = `
