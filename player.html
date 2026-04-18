@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>祝福视频</title>
+<title>播放祝福视频</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;min-height:100vh;display:flex;align-items:center;justify-content:center}
-video{max-width:100%;max-height:100vh;object-fit:contain}
+body{background:#000;height:100vh;display:grid;place-items:center}
+video{max-width:100%;max-height:100vh}
 </style>
 </head>
 <body>
-<video id="video" controls autoplay playsinline></video>
+<video id="v" controls autoplay playsinline></video>
 <script>
-const params = new URLSearchParams(location.search);
-const src = params.get('src');
-if (src) {
-document.getElementById('video').src = src;
+const u = new URLSearchParams(location.search).get('video');
+if(u){
+  const v = document.getElementById('v');
+  fetch(u)
+  .then(r=>r.blob())
+  .then(b=>{
+    v.src = URL.createObjectURL(b);
+  })
 }
 </script>
 </body>
