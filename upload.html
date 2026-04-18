@@ -1,1 +1,23 @@
-https://wilmawest-ux.github.io/-/upload.html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>祝福视频</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;min-height:100vh;display:flex;align-items:center;justify-content:center}
+video{max-width:100%;max-height:100vh;object-fit:contain}
+</style>
+</head>
+<body>
+<video id="video" controls autoplay playsinline></video>
+<script>
+const params = new URLSearchParams(location.search);
+const src = params.get('src');
+if (src) {
+document.getElementById('video').src = src;
+}
+</script>
+</body>
+</html>
